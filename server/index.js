@@ -32,12 +32,28 @@ app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
+    
+    // In production, we specifically want to allow the Vercel URL
+    const isAllowed = allowedOrigins.some(allowed => 
+      origin === allowed || origin.endsWith('.vercel.app')
+    );
+    
+    if (isAllowed || process.env.NODE_ENV !== 'production') {
+      return callback(null, true);
+    }
+    
     callback(new Error(`CORS blocked: ${origin}`));
   },
   credentials: true,
 }));
 app.use(express.json());
+
+// Health check for Render/Uptime monitoring
+app.get("/health", (_req, res) => res.json({ 
+  status: "ok", 
+  timestamp: new Date().toISOString(),
+  uptime: process.uptime()
+}));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/transactions", transactionRoutes);
