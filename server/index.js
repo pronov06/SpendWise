@@ -116,3 +116,5 @@ mongoose.connection.on("disconnected", () =>
 
 connectDB();
 
+export default app;
+
