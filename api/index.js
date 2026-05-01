@@ -90,6 +90,10 @@ const mongoOptions = {
 };
 
 const connectDB = async (retries = 5) => {
+  if (!process.env.MONGO_URI) {
+    console.error("❌ MONGO_URI is not defined in environment variables");
+    return;
+  }
   for (let i = 1; i <= retries; i++) {
     try {
       await mongoose.connect(process.env.MONGO_URI, mongoOptions);
