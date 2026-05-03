@@ -7,6 +7,8 @@ import {
   X,
   Receipt,
   Loader2,
+  Mail,
+  Check,
 } from "lucide-react";
 import { groupApi } from "@/app/services/api";
 
@@ -112,6 +114,8 @@ export function GroupExpenses() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSendingEmails, setIsSendingEmails] = useState(false);
+  const [emailSuccess, setEmailSuccess] = useState(false);
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
   const refreshGroups = async () => {
@@ -283,6 +287,35 @@ export function GroupExpenses() {
     () => (selectedGroup ? calculateBalances(selectedGroup) : {}),
     [selectedGroup]
   );
+
+  const handleSendEmails = async () => {
+    if (!selectedGroup) return;
+    try {
+      setIsSendingEmails(true);
+      setError(null);
+      
+      const settlements = getSettlements(selectedGroup).map(s => ({
+        from: getMemberName(selectedGroup, s.from),
+        to: getMemberName(selectedGroup, s.to),
+        amount: s.amount
+      }));
+      
+      const totalExpenses = selectedGroup.expenses.reduce((s, e) => s + e.amount, 0);
+      
+      await groupApi.sendSplitEmails(selectedGroup.id, {
+        settlements,
+        totalExpenses
+      });
+      
+      setEmailSuccess(true);
+      setTimeout(() => setEmailSuccess(false), 3000);
+    } catch (e: any) {
+      console.error("Send emails error:", e);
+      setError(e?.message || "Failed to send split emails.");
+    } finally {
+      setIsSendingEmails(false);
+    }
+  };
 
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
@@ -468,7 +501,29 @@ export function GroupExpenses() {
 
             {/* Settlements */}
             <div className="bg-white rounded-2xl p-6 border border-gray-200 mb-6">
-              <h3 className="font-semibold text-gray-900 mb-4">Settlements</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-gray-900">Settlements</h3>
+                {selectedGroup.expenses.length > 0 && (
+                  <button
+                    onClick={handleSendEmails}
+                    disabled={isSendingEmails || emailSuccess}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm transition-all ${
+                      emailSuccess 
+                        ? "bg-green-100 text-green-700" 
+                        : "bg-teal-50 text-teal-700 hover:bg-teal-100"
+                    }`}
+                  >
+                    {isSendingEmails ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : emailSuccess ? (
+                      <Check className="w-4 h-4" />
+                    ) : (
+                      <Mail className="w-4 h-4" />
+                    )}
+                    {emailSuccess ? "Emails Sent!" : "Send Split via Email"}
+                  </button>
+                )}
+              </div>
               {getSettlements(selectedGroup).length > 0 ? (
                 <div className="space-y-3">
                   {getSettlements(selectedGroup).map((s, idx) => (

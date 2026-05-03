@@ -170,6 +170,83 @@ export const verifyEmailConfig = async () => {
   }
 };
 
+// ─── Send Group Split Email ──────────────────────────────
+export const sendGroupSplitEmail = async (memberEmail, memberName, groupName, settlements, totalExpenses, expensesList) => {
+  try {
+    const settlementsHtml = settlements.length > 0 
+      ? settlements.map(s => `
+          <div style="background: #fff; padding: 10px; margin: 5px 0; border-radius: 4px; border-left: 4px solid ${s.from === memberName ? '#e53e3e' : '#38a169'};">
+            <strong>${s.from}</strong> owes <strong>${s.to}</strong>: ₹${s.amount.toFixed(2)}
+          </div>
+        `).join('')
+      : '<p style="color: #38a169; font-weight: bold;">All settled up! 🎉</p>';
+
+    const expensesHtml = expensesList.map(e => `
+      <tr>
+        <td style="padding: 8px; border-bottom: 1px solid #eee;">${e.description}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee;">₹${e.amount.toFixed(2)}</td>
+        <td style="padding: 8px; border-bottom: 1px solid #eee; font-size: 11px; color: #666;">${e.paidByName}</td>
+      </tr>
+    `).join('');
+
+    const mailOptions = {
+      from: process.env.EMAIL_FROM || "noreply@spendwise.app",
+      to: memberEmail,
+      subject: `SpendWise - Expense Split for "${groupName}"`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #f4f7f6; padding: 20px; border-radius: 12px;">
+          <div style="background: linear-gradient(135deg, #14b8a6 0%, #059669 100%); padding: 30px; text-align: center; color: white; border-radius: 8px 8px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">Group Expense Split</h1>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">Group: ${groupName}</p>
+          </div>
+          
+          <div style="background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+            <h2 style="color: #333; margin-top: 0;">Hello ${memberName},</h2>
+            <p style="color: #666; line-height: 1.6;">
+              Here are the split details and settlements for the group <strong>${groupName}</strong>.
+            </p>
+
+            <div style="margin: 25px 0; background: #f0fdfa; padding: 20px; border-radius: 8px;">
+              <h3 style="color: #134e4a; margin-top: 0; font-size: 16px;">Current Settlements</h3>
+              ${settlementsHtml}
+            </div>
+
+            <h3 style="color: #333; font-size: 16px; border-bottom: 2px solid #f0fdfa; padding-bottom: 10px;">Bill Details</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+              <thead>
+                <tr style="text-align: left; background: #f9fafb;">
+                  <th style="padding: 8px; color: #4b5563; font-size: 12px;">Description</th>
+                  <th style="padding: 8px; color: #4b5563; font-size: 12px;">Amount</th>
+                  <th style="padding: 8px; color: #4b5563; font-size: 12px;">Paid By</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${expensesHtml}
+              </tbody>
+            </table>
+            
+            <div style="margin-top: 20px; text-align: right;">
+              <p style="margin: 0; color: #666; font-size: 14px;">Total Group Expenses</p>
+              <h2 style="margin: 0; color: #14b8a6;">₹${totalExpenses.toFixed(2)}</h2>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+            <p style="color: #999; font-size: 12px; text-align: center;">
+              This is an automated split report from SpendWise. Track more at <a href="${process.env.FRONTEND_URL}" style="color: #14b8a6; text-decoration: none;">spendwise.app</a>
+            </p>
+          </div>
+        </div>
+      `,
+    };
+
+    await getTransporter().sendMail(mailOptions);
+    console.log(`✅ Split email sent to ${memberEmail}`);
+    return true;
+  } catch (error) {
+    console.error(`❌ Failed to send split email to ${memberEmail}:`, error.message);
+  }
+};
+
 // ─── Send Feedback Email to Admin ─────────────────────────
 export const sendFeedbackEmailToAdmin = async (user, feedback) => {
   try {

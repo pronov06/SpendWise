@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { IndianRupee, Calendar, FileText, Wallet } from "lucide-react";
-import { budgetApi } from "@/app/services/api";
+import { budgetApi, transactionApi } from "@/app/services/api";
 import { useNotifications } from "@/app/context/NotificationContext";
 
 export function AddExpense() {
@@ -67,6 +67,16 @@ export function AddExpense() {
       } catch (alertErr) {
         console.error("Alert logic failed:", alertErr);
       }
+
+      // --- Save Transaction ---
+      await transactionApi.create({
+        type: "expense",
+        category: formData.category,
+        description: formData.notes || formData.category,
+        amount: amountNum,
+        date: formData.date,
+        icon: expenseCategories.find(c => c.name === formData.category)?.icon || "💸"
+      });
 
       addNotification({
         type: "success",

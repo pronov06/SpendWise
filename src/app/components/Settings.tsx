@@ -7,6 +7,7 @@ import { useNotifications } from "@/app/context/NotificationContext";
 type Profile = {
   name: string;
   phone: string;
+  avatar: string;
   budgetAlerts: boolean;
   categoryAlerts: boolean;
   weeklySummary: boolean;
@@ -19,6 +20,7 @@ export function Settings() {
   const [profile, setProfile] = useState<Profile>({ 
     name: user?.name || "", 
     phone: user?.phone || "",
+    avatar: user?.avatar || "",
     budgetAlerts: user?.budgetAlerts ?? true,
     categoryAlerts: user?.categoryAlerts ?? true,
     weeklySummary: user?.weeklySummary ?? false
@@ -33,6 +35,7 @@ export function Settings() {
       setProfile({ 
         name: user.name || "", 
         phone: user.phone || "",
+        avatar: user.avatar || "",
         budgetAlerts: user.budgetAlerts ?? true,
         categoryAlerts: user.categoryAlerts ?? true,
         weeklySummary: user.weeklySummary ?? false
@@ -59,6 +62,25 @@ export function Settings() {
       });
     } finally {
       setProfileLoading(false);
+    }
+  };
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        addNotification({
+          type: "error",
+          title: "File too large",
+          message: "Please select an image smaller than 2MB."
+        });
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfile(prev => ({ ...prev, avatar: reader.result as string }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -113,12 +135,22 @@ export function Settings() {
             <div className="p-8">
               <div className="flex items-center gap-4 mb-10">
                 <div className="relative group">
-                  <div className="w-24 h-24 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl flex items-center justify-center text-white text-3xl font-black shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform">
-                    {user?.name?.charAt(0).toUpperCase()}
+                  <div className="w-24 h-24 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-3xl flex items-center justify-center text-white text-3xl font-black shadow-lg shadow-teal-500/20 group-hover:scale-105 transition-transform overflow-hidden">
+                    {profile.avatar ? (
+                      <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover" />
+                    ) : (
+                      user?.name?.charAt(0).toUpperCase()
+                    )}
                   </div>
-                  <button className="absolute -bottom-2 -right-2 w-10 h-10 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg flex items-center justify-center text-teal-600 hover:text-teal-700 transition-all hover:scale-110">
+                  <label className="absolute -bottom-2 -right-2 w-10 h-10 bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl shadow-lg flex items-center justify-center text-teal-600 hover:text-teal-700 transition-all hover:scale-110 cursor-pointer">
                     <Camera className="w-5 h-5" />
-                  </button>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={handleAvatarChange} 
+                      className="hidden" 
+                    />
+                  </label>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">{user?.name}</h2>

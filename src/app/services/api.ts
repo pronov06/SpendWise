@@ -86,6 +86,7 @@ export const groupApi = {
   addExpense:    (id: string, body: object)      => request(`/group-expenses/${id}/add-expense`, { method: "POST", body: JSON.stringify(body) }),
   deleteExpense: (groupId: string, expId: string) => request(`/group-expenses/${groupId}/expenses/${expId}`, { method: "DELETE" }),
   delete:        (id: string)                    => request(`/group-expenses/${id}`, { method: "DELETE" }),
+  sendSplitEmails: (id: string, body: object)    => request(`/group-expenses/${id}/send-split-emails`, { method: "POST", body: JSON.stringify(body) }),
 };
 
 export const reportsApi = {

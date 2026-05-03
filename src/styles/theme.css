@@ -206,9 +206,18 @@
 .dark .bg-gray-50 { background-color: rgb(31 41 55); }   /* gray-800 */
 .dark .bg-gray-100 { background-color: rgb(55 65 81); }  /* gray-700 */
 
+/* Specific background colors for cards and alerts */
+.dark .bg-teal-50 { background-color: rgba(20, 184, 166, 0.1); }
+.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.1); }
+.dark .bg-teal-100 { background-color: rgba(20, 184, 166, 0.2); }
+.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.1); }
+.dark .bg-green-50 { background-color: rgba(16, 185, 129, 0.1); }
+.dark .bg-orange-100 { background-color: rgba(245, 158, 11, 0.15); }
+.dark .bg-green-100 { background-color: rgba(16, 185, 129, 0.15); }
+
 /* Border overrides */
-.dark .border-gray-100 { border-color: rgb(55 65 81); }  /* gray-700 */
-.dark .border-gray-200 { border-color: rgb(75 85 99); }  /* gray-600 */
+.dark .border-gray-100 { border-color: rgba(255, 255, 255, 0.1); }
+.dark .border-gray-200 { border-color: rgba(255, 255, 255, 0.15); }
 
 /* Input backgrounds */
 .dark input:not([class*="bg-"]) { background-color: rgb(31 41 55); color: rgb(241 245 249); }

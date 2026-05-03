@@ -45,6 +45,7 @@ router.put("/profile", async (req, res) => {
       email: user.email, 
       phone: user.phone, 
       role: user.role, 
+      avatar: user.avatar,
       monthlyBudget: user.monthlyBudget,
       budgetAlerts: user.budgetAlerts,
       categoryAlerts: user.categoryAlerts,

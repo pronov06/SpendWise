@@ -30,7 +30,7 @@ export function DashboardLayout() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { unreadCount } = useNotifications();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
@@ -63,9 +63,13 @@ export function DashboardLayout() {
           <div className="flex items-center gap-3">
             <div
               className={`${isSidebarCollapsed ? "w-10 h-10" : "w-12 h-12"
-                } bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl flex items-center justify-center transition-all`}
+                } bg-gradient-to-br from-teal-500 to-emerald-600 rounded-xl flex items-center justify-center transition-all overflow-hidden border-2 border-white dark:border-gray-800 shadow-sm`}
             >
-              <Wallet className={`${isSidebarCollapsed ? "w-5 h-5" : "w-6 h-6"} text-white`} />
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <Wallet className={`${isSidebarCollapsed ? "w-5 h-5" : "w-6 h-6"} text-white`} />
+              )}
             </div>
             {!isSidebarCollapsed && (
               <div>
@@ -154,10 +158,14 @@ export function DashboardLayout() {
               <ThemeToggle />
               <Link
                 to="/settings"
-                className="p-2 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-teal-500 transition-all group"
+                className="w-10 h-10 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-teal-500 transition-all group overflow-hidden flex items-center justify-center"
                 title="Settings"
               >
-                <User className="w-5 h-5 text-gray-600 group-hover:text-teal-600 transition-colors" />
+                {user?.avatar ? (
+                  <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <User className="w-5 h-5 text-gray-600 group-hover:text-teal-600 transition-colors" />
+                )}
               </Link>
             </div>
           </div>
@@ -249,10 +257,14 @@ export function DashboardLayout() {
           </div>
           <Link
             to="/settings"
-            className="ml-3 p-2 bg-white rounded-xl shadow-sm border border-gray-100 hover:border-teal-500 transition-all group"
+            className="ml-3 w-10 h-10 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 hover:border-teal-500 transition-all group overflow-hidden flex items-center justify-center"
             title="Settings"
           >
-            <User className="w-5 h-5 text-gray-600 group-hover:text-teal-600 transition-colors" />
+            {user?.avatar ? (
+              <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" />
+            ) : (
+              <User className="w-5 h-5 text-gray-600 group-hover:text-teal-600 transition-colors" />
+            )}
           </Link>
         </header>
 

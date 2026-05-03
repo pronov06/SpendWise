@@ -1,7 +1,7 @@
-// SpendWise API Server - Updated
+import "dotenv/config";
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { verifyEmailConfig } from "./services/emailService.js";
 
@@ -16,8 +16,6 @@ import reportsRoutes from "./routes/reports.js";
 import heatmapRoutes from "./routes/heatmap.js";
 import feedbackRoutes from "./routes/feedback.js";
 import userRoutes from "./routes/user.js";
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;

@@ -10,6 +10,7 @@ interface AuthUser {
   budgetAlerts?: boolean;
   categoryAlerts?: boolean;
   weeklySummary?: boolean;
+  avatar?: string;
 }
 
 interface AuthContextType {

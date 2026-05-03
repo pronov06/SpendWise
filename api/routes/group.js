@@ -1,6 +1,7 @@
 import express from "express";
 import GroupExpense from "../models/GroupExpense.js";
 import { protect } from "../middleware/auth.js";
+import { sendGroupSplitEmail } from "../services/emailService.js";
 
 const router = express.Router();
 router.use(protect);
@@ -190,6 +191,42 @@ router.delete("/:id", async (req, res) => {
         .status(404)
         .json({ message: "Group not found or unauthorized" });
     res.json({ message: "Group deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// ─── POST /api/group-expenses/:id/send-split-emails ──────────────────────────
+router.post("/:id/send-split-emails", async (req, res) => {
+  try {
+    const group = await GroupExpense.findById(req.params.id);
+    if (!group) return res.status(404).json({ message: "Group not found" });
+
+    const { settlements, totalExpenses } = req.body;
+
+    // We use the settlements and totalExpenses from frontend for convenience, 
+    // but we could also calculate them here.
+    
+    const expensesList = group.expenses.map(e => ({
+      description: e.description,
+      amount: e.amount,
+      paidByName: e.paidByName || "Unknown"
+    }));
+
+    const emailPromises = group.members.map(member => 
+      sendGroupSplitEmail(
+        member.email,
+        member.name,
+        group.name,
+        settlements,
+        totalExpenses,
+        expensesList
+      )
+    );
+
+    await Promise.all(emailPromises);
+
+    res.json({ message: "Split emails sent successfully to all members" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
