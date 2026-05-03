@@ -119,3 +119,7 @@ export const userApi = {
   updateProfile: (body: object) => request("/user/profile", { method: "PUT", body: JSON.stringify(body) }),
   changePassword: (body: object) => request("/user/change-password", { method: "PUT", body: JSON.stringify(body) }),
 };
+
+export const chatApi = {
+  sendMessage: (body: { message: string }) => request("/chat", { method: "POST", body: JSON.stringify(body) }),
+};

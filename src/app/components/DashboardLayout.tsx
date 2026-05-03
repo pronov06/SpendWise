@@ -19,11 +19,13 @@ import {
   Calendar,
   UsersRound,
   User,
+  Bot,
 } from "lucide-react";
 import { useAuth } from "@/app/context/AuthContext";
 import { useNotifications } from "@/app/context/NotificationContext";
 import { NotificationCenter } from "./NotificationCenter";
 import { ThemeToggle } from "./ThemeToggle";
+import { Chatbot } from "./Chatbot";
 
 export function DashboardLayout() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
@@ -33,6 +35,7 @@ export function DashboardLayout() {
   const { user, logout } = useAuth();
   const { unreadCount } = useNotifications();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const navItems = [
     { icon: Home, label: "Dashboard", path: "/dashboard/user" },
@@ -272,6 +275,14 @@ export function DashboardLayout() {
       </main>
 
       <div className="fixed bottom-8 right-8 flex flex-col gap-3 z-30">
+        <button
+          onClick={() => setIsChatOpen(!isChatOpen)}
+          className="w-14 h-14 bg-gradient-to-r from-teal-400 to-teal-500 hover:shadow-xl text-white rounded-full shadow-lg flex items-center justify-center transition-all group relative overflow-hidden"
+          title="AI Advisor"
+        >
+          <div className="absolute inset-0 bg-white/20 scale-0 group-hover:scale-100 transition-transform rounded-full origin-center"></div>
+          <Bot className="w-6 h-6 relative z-10" />
+        </button>
         <Link
           to="/add-income"
           className="w-14 h-14 bg-gradient-to-r from-teal-500 to-emerald-600 hover:shadow-xl text-white rounded-full shadow-lg flex items-center justify-center transition-all group"
@@ -287,6 +298,8 @@ export function DashboardLayout() {
           <Plus className="w-6 h-6" />
         </Link>
       </div>
+
+      <Chatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 }

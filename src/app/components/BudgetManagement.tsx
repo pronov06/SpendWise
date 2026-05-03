@@ -225,15 +225,15 @@ export function BudgetManagement() {
               className="w-full h-3 bg-gray-100 rounded-full appearance-none cursor-pointer accent-teal-600"
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-teal-50 to-emerald-50 p-6 rounded-2xl border border-teal-100/50">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/40 dark:to-emerald-900/40 p-6 rounded-2xl border border-teal-100/50 dark:border-teal-800/50">
               <div>
-                <p className="text-xs font-semibold text-teal-700 uppercase tracking-wider mb-1">Spent so far</p>
+                <p className="text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">Spent so far</p>
                 <p className="text-3xl font-black text-gray-900">
                   ₹{currentSpending.toLocaleString("en-IN")}
                 </p>
               </div>
               <div className="md:text-right">
-                <p className="text-xs font-semibold text-teal-700 uppercase tracking-wider mb-1">Remaining</p>
+                <p className="text-xs font-semibold text-teal-700 dark:text-teal-400 uppercase tracking-wider mb-1">Remaining</p>
                 <p className={`text-3xl font-black ${monthlyBudget - currentSpending < 0 ? 'text-red-600' : 'text-emerald-600'}`}>
                   ₹{Math.abs(monthlyBudget - currentSpending).toLocaleString("en-IN")}
                   <span className="text-xs ml-1 font-normal uppercase">
@@ -243,7 +243,7 @@ export function BudgetManagement() {
               </div>
 
               <div className="md:col-span-2">
-                <div className="flex justify-between text-xs font-bold text-teal-800 mb-2">
+                <div className="flex justify-between text-xs font-bold text-teal-800 dark:text-teal-300 mb-2">
                   <span>Usage Strategy</span>
                   <span>{spendingPercentage.toFixed(1)}%</span>
                 </div>

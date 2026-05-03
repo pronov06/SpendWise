@@ -16,6 +16,7 @@ import reportsRoutes from "./routes/reports.js";
 import heatmapRoutes from "./routes/heatmap.js";
 import feedbackRoutes from "./routes/feedback.js";
 import userRoutes from "./routes/user.js";
+import chatRoutes from "./routes/chat.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -64,6 +65,7 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/heatmap", heatmapRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.get("/", (_req, res) => res.json({ status: "SpendWise API running ✅" }));
 

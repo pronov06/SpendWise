@@ -527,10 +527,10 @@ export function GroupExpenses() {
               {getSettlements(selectedGroup).length > 0 ? (
                 <div className="space-y-3">
                   {getSettlements(selectedGroup).map((s, idx) => (
-                    <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-100">
+                    <div key={idx} className="flex items-center justify-between p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/40 dark:to-orange-900/40 border border-amber-100 dark:border-amber-800/50">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
-                          <ArrowRight className="w-5 h-5 text-amber-600" />
+                        <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/60 rounded-full flex items-center justify-center">
+                          <ArrowRight className="w-5 h-5 text-amber-600 dark:text-amber-400" />
                         </div>
                         <p className="text-sm text-gray-900">
                           <span className="font-semibold">{getMemberName(selectedGroup, s.from)}</span>
@@ -538,7 +538,7 @@ export function GroupExpenses() {
                           <span className="font-semibold">{getMemberName(selectedGroup, s.to)}</span>
                         </p>
                       </div>
-                      <p className="text-lg font-bold text-amber-600">₹{s.amount.toFixed(2)}</p>
+                      <p className="text-lg font-bold text-amber-600 dark:text-amber-400">₹{s.amount.toFixed(2)}</p>
                     </div>
                   ))}
                 </div>
