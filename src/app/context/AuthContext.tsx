@@ -47,7 +47,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       email,
       password,
     });
-    console.log("LOGIN PAYLOAD:", { email, password });
     localStorage.setItem("spendwise_token", data.token);
     localStorage.setItem("spendwise_user", JSON.stringify(data.user));
     setToken(data.token);

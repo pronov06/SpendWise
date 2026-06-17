@@ -32,8 +32,12 @@ router.post("/register", async (req, res) => {
       otpExpires,
     });
 
-    // Send OTP via email
-    await sendOTPEmail(email, otp);
+    // Send OTP via email (skip if MOCK_OTP is enabled)
+    if (process.env.MOCK_OTP === "true") {
+      console.log(`\n📧 [MOCK EMAIL] Skipping actual email dispatch (MOCK_OTP=true)`);
+    } else {
+      await sendOTPEmail(email, otp);
+    }
 
     // Log OTP to console for easy local testing
     console.log(`\n🔑 DEVELOPMENT OTP for ${email}: ${otp}\n`);
@@ -63,8 +67,12 @@ router.post("/verify-otp", async (req, res) => {
     user.otpExpires = null;
     await user.save();
 
-    // Send welcome email
-    await sendWelcomeEmail(email, user.name);
+    // Send welcome email (skip if MOCK_OTP is enabled)
+    if (process.env.MOCK_OTP === "true") {
+      console.log(`\n📧 [MOCK EMAIL] Skipping welcome email (MOCK_OTP=true)`);
+    } else {
+      await sendWelcomeEmail(email, user.name);
+    }
 
     const token = generateToken(user._id);
     res.json({
@@ -90,8 +98,12 @@ router.post("/resend-otp", async (req, res) => {
     user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
 
-    // Send new OTP via email
-    await sendOTPEmail(email, otp);
+    // Send new OTP via email (skip if MOCK_OTP is enabled)
+    if (process.env.MOCK_OTP === "true") {
+      console.log(`\n📧 [MOCK EMAIL] Skipping actual email dispatch (MOCK_OTP=true)`);
+    } else {
+      await sendOTPEmail(email, otp);
+    }
     
     // Log OTP to console for easy local testing
     console.log(`\n🔑 DEVELOPMENT OTP for ${email}: ${otp}\n`);

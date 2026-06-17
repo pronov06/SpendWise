@@ -1,6 +1,6 @@
 import express from "express";
 import Budget from "../models/Budget.js";
-import Transaction from "../models/Transaction.js";
+import Expense from "../models/Expense.js"; // BUG-005 FIX: was querying Transaction (wrong model)
 import { protect } from "../middleware/auth.js";
 
 const router = express.Router();
@@ -15,11 +15,11 @@ router.get("/", async (req, res) => {
 
     const budgetsWithSpent = await Promise.all(
       budgets.map(async (b) => {
-        const spent = await Transaction.aggregate([
+        // BUG-005 FIX: query Expense collection (where add-expense flow saves data)
+        const spent = await Expense.aggregate([
           {
             $match: {
               userId: req.user._id,
-              type: "expense",
               category: b.category,
               date: { $gte: startOfMonth },
             },
@@ -60,7 +60,13 @@ router.put("/:id", async (req, res) => {
   try {
     const budget = await Budget.findOne({ _id: req.params.id, userId: req.user._id });
     if (!budget) return res.status(404).json({ message: "Budget not found" });
-    Object.assign(budget, req.body);
+    // BUG-006 FIX: whitelist fields — prevents overwriting userId or _id via req.body
+    const { category, limit, period, color, icon } = req.body;
+    if (category !== undefined) budget.category = category;
+    if (limit !== undefined) budget.limit = limit;
+    if (period !== undefined) budget.period = period;
+    if (color !== undefined) budget.color = color;
+    if (icon !== undefined) budget.icon = icon;
     await budget.save();
     res.json(budget);
   } catch (err) {

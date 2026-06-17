@@ -7,7 +7,8 @@
     "build": "vite build",
     "dev": "vite",
     "server": "node --watch api/index.js",
-    "dev:all": "npm run dev & npm run server"
+    "start": "node api/index.js",
+    "dev:all": "npx concurrently \"npm run dev\" \"npm run server\" --names \"vite,server\" --prefix-colors \"cyan,green\""
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
@@ -51,6 +52,7 @@
     "dotenv": "^16.4.5",
     "embla-carousel-react": "8.6.0",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.5.2",
     "express-validator": "^7.2.0",
     "input-otp": "1.4.2",
     "jsonwebtoken": "^9.0.2",

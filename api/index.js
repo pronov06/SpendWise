@@ -1,8 +1,15 @@
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, ".env") });
 
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import rateLimit from "express-rate-limit"; // BUG-011 FIX: add rate limiting on auth
 import { verifyEmailConfig } from "./services/emailService.js";
 
 import authRoutes from "./routes/auth.js";
@@ -21,10 +28,9 @@ import chatRoutes from "./routes/chat.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Allow both local dev and the live Vercel frontend
+// Allow local dev frontend origin
 const allowedOrigins = [
   "http://localhost:5173",
-  process.env.FRONTEND_URL,
 ].filter(Boolean);
 
 app.use(cors({
@@ -32,10 +38,8 @@ app.use(cors({
     // Allow requests with no origin (mobile apps, curl, Postman)
     if (!origin) return callback(null, true);
     
-    // In production, we specifically want to allow the Vercel URL
-    const isAllowed = allowedOrigins.some(allowed => 
-      origin === allowed || origin.endsWith('.vercel.app')
-    );
+    // Check if the origin matches our allowed list
+    const isAllowed = allowedOrigins.some(allowed => origin === allowed);
     
     if (isAllowed || process.env.NODE_ENV !== 'production') {
       return callback(null, true);
@@ -47,6 +51,25 @@ app.use(cors({
 }));
 app.use(express.json());
 
+// Rate limiter: max 10 auth requests per 15 minutes per IP
+// Protects against OTP brute-force and credential spray attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many requests, please try again after 15 minutes." },
+});
+
+// Rate limiter for chat: max 30 messages per 15 minutes per user (cost protection)
+const chatLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: "Too many chat requests, please slow down." },
+});
+
 // Health check for Render/Uptime monitoring
 app.get("/health", (_req, res) => res.json({ 
   status: "ok", 
@@ -54,7 +77,7 @@ app.get("/health", (_req, res) => res.json({
   uptime: process.uptime()
 }));
 
-app.use("/api/auth", authRoutes);
+app.use("/api/auth", authLimiter, authRoutes); // rate-limited
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/expenses", expenseRoutes);
 app.use("/api/incomes", incomeRoutes);
@@ -65,7 +88,7 @@ app.use("/api/reports", reportsRoutes);
 app.use("/api/heatmap", heatmapRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api/chat", chatRoutes);
+app.use("/api/chat", chatLimiter, chatRoutes); // rate-limited (API cost protection)
 
 app.get("/", (_req, res) => res.json({ status: "SpendWise API running ✅" }));
 

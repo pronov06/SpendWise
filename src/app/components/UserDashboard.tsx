@@ -56,17 +56,11 @@ export function UserDashboard() {
         const allTxRes = await transactionApi.getAll({ limit: "99999" });
         const allTx = allTxRes.transactions || [];
         
-        console.log("All Transactions Response:", allTxRes);
-        console.log("All Transactions Count:", allTx.length);
-        console.log("All Transactions:", allTx);
-        
         // Calculate all-time balance from transactions
         let totalExpenses = 0;
         let totalIncomes = 0;
         
-        allTx.forEach((tx: any, idx: number) => {
-          console.log(`TX ${idx}:`, tx);
-          
+        allTx.forEach((tx: any) => {
           // Determine type - check multiple possible field names
           const txType = tx.type || tx.txType || (tx.amount < 0 ? "expense" : "income");
           const amount = Math.abs(tx.amount || 0); // Get absolute value
@@ -79,10 +73,6 @@ export function UserDashboard() {
         });
         
         const allTimeBalance = totalIncomes - totalExpenses;
-        
-        console.log("Total Expenses:", totalExpenses);
-        console.log("Total Incomes:", totalIncomes);
-        console.log("All Time Balance:", allTimeBalance);
         
         setSummary(summaryData);
         setAllTimeBalance(allTimeBalance);

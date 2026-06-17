@@ -1,7 +1,7 @@
 import express from "express";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { protect } from "../middleware/auth.js";
-import Transaction from "../models/Transaction.js";
+import Expense from "../models/Expense.js"; // BUG-005 FIX: was Transaction (empty collection)
 import Budget from "../models/Budget.js";
 import User from "../models/User.js";
 
@@ -29,9 +29,9 @@ router.post("/", async (req, res) => {
     
     // Fetch all expenses for the current year
     const startOfYear = new Date(new Date().getFullYear(), 0, 1);
-    const expenses = await Transaction.find({
+    // BUG-005 FIX: query Expense model (where add-expense flow stores data)
+    const expenses = await Expense.find({
       userId,
-      type: "expense",
       date: { $gte: startOfYear }
     });
 

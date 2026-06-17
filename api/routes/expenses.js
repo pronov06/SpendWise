@@ -117,7 +117,18 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ message: "Expense not found" });
     }
 
-    Object.assign(expense, req.body);
+    // BUG-006 FIX: whitelist updatable fields — prevents overwriting userId/_id via req.body
+    const { category, description, amount, date, tags, icon, paymentMethod, isRecurring, recurringInterval } = req.body;
+    if (category !== undefined) expense.category = category;
+    if (description !== undefined) expense.description = description;
+    if (amount !== undefined) expense.amount = amount;
+    if (date !== undefined) expense.date = date;
+    if (tags !== undefined) expense.tags = tags;
+    if (icon !== undefined) expense.icon = icon;
+    if (paymentMethod !== undefined) expense.paymentMethod = paymentMethod;
+    if (isRecurring !== undefined) expense.isRecurring = isRecurring;
+    if (recurringInterval !== undefined) expense.recurringInterval = recurringInterval;
+
     await expense.save();
     res.json(expense);
   } catch (err) {

@@ -17,6 +17,17 @@ import { ErrorBoundary } from "@/app/components/ErrorBoundary";
 import { ProtectedRoute } from "@/app/components/ProtectedRoute";
 import { Settings } from "@/app/components/Settings";
 
+// BUG-010 FIX: inline 404 page (no separate file needed, keeps it simple)
+function NotFoundPage() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh", gap: "1rem", fontFamily: "sans-serif" }}>
+      <h1 style={{ fontSize: "4rem", margin: 0 }}>404</h1>
+      <p style={{ color: "#666" }}>Page not found</p>
+      <a href="/" style={{ color: "#14b8a6", textDecoration: "none" }}>← Back to Home</a>
+    </div>
+  );
+}
+
 const guardedUserLayout = {
   element: (
     <ProtectedRoute>
@@ -41,4 +52,7 @@ export const router = createBrowserRouter([
   { path: "/group-expenses", ...guardedUserLayout, ErrorBoundary, children: [{ index: true, Component: GroupExpenses }] },
   { path: "/feedback", ...guardedUserLayout, ErrorBoundary, children: [{ index: true, Component: Feedback }] },
   { path: "/settings", ...guardedUserLayout, ErrorBoundary, children: [{ index: true, Component: Settings }] },
+  // BUG-010 FIX: catch-all for undefined paths — prevents blank white screen
+  { path: "*", Component: NotFoundPage },
 ]);
+

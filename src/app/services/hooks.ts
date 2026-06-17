@@ -4,7 +4,7 @@ import {
   incomeApi,
   budgetApi,
   groupApi,
-  groupExpenseApi,
+  groupApi as groupExpenseApi,
   feedbackApi,
 } from "./api";
 

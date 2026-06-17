@@ -116,6 +116,8 @@ export function GroupExpenses() {
   const [error, setError] = useState<string | null>(null);
   const [isSendingEmails, setIsSendingEmails] = useState(false);
   const [emailSuccess, setEmailSuccess] = useState(false);
+  // BUG-014 FIX: replaces native confirm() — tracks pending destructive action
+  const [deleteTarget, setDeleteTarget] = useState<{ type: "expense" | "group"; id: string } | null>(null);
 
   // ── Helpers ──────────────────────────────────────────────────────────────────
   const refreshGroups = async () => {
@@ -259,27 +261,32 @@ export function GroupExpenses() {
 
   const handleDeleteExpense = async (expenseId: string) => {
     if (!selectedGroup) return;
-    if (!confirm("Delete this expense?")) return;
-    try {
-      setError(null);
-      await groupApi.deleteExpense(selectedGroup.id, expenseId);
-      await refreshGroups();
-    } catch (e: any) {
-      console.error("Delete expense error:", e);
-      setError(e?.message || "Failed to delete expense.");
-    }
+    // BUG-014 FIX: use React state modal instead of native confirm()
+    setDeleteTarget({ type: "expense", id: expenseId });
   };
 
   const handleDeleteGroup = async (groupId: string) => {
-    if (!confirm("Delete this entire group? This cannot be undone.")) return;
+    // BUG-014 FIX: use React state modal instead of native confirm()
+    setDeleteTarget({ type: "group", id: groupId });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return;
     try {
       setError(null);
-      await groupApi.delete(groupId);
-      setGroups((prev) => prev.filter((g) => g.id !== groupId));
-      setSelectedGroup(null);
+      if (deleteTarget.type === "expense" && selectedGroup) {
+        await groupApi.deleteExpense(selectedGroup.id, deleteTarget.id);
+        await refreshGroups();
+      } else if (deleteTarget.type === "group") {
+        await groupApi.delete(deleteTarget.id);
+        setGroups((prev) => prev.filter((g) => g.id !== deleteTarget.id));
+        setSelectedGroup(null);
+      }
     } catch (e: any) {
-      console.error("Delete group error:", e);
-      setError(e?.message || "Failed to delete group.");
+      console.error("Delete error:", e);
+      setError(e?.message || "Failed to delete.");
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
@@ -320,6 +327,23 @@ export function GroupExpenses() {
   // ── Render ───────────────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen p-4 md:p-8">
+      {/* BUG-014 FIX: Inline confirmation modal replacing native confirm() */}
+      {deleteTarget && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.5)" }}>
+          <div style={{ background: "white", borderRadius: "12px", padding: "28px", maxWidth: "360px", width: "90%", boxShadow: "0 20px 60px rgba(0,0,0,0.3)" }}>
+            <h3 style={{ margin: "0 0 8px", fontSize: "18px", fontWeight: 600 }}>Confirm Delete</h3>
+            <p style={{ margin: "0 0 24px", color: "#666", fontSize: "14px" }}>
+              {deleteTarget.type === "group"
+                ? "Delete this entire group? This cannot be undone."
+                : "Delete this expense?"}
+            </p>
+            <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
+              <button onClick={() => setDeleteTarget(null)} style={{ padding: "8px 18px", borderRadius: "8px", border: "1px solid #e5e7eb", background: "white", cursor: "pointer", fontWeight: 500 }}>Cancel</button>
+              <button onClick={handleConfirmDelete} style={{ padding: "8px 18px", borderRadius: "8px", border: "none", background: "#ef4444", color: "white", cursor: "pointer", fontWeight: 500 }}>Delete</button>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="max-w-7xl mx-auto">
 
         {/* Header */}

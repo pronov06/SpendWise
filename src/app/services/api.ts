@@ -79,15 +79,20 @@ export const budgetApi = {
 // Groups are stored in the 'groupexpenses' MongoDB collection.
 // Group expenses are embedded within each group document.
 export const groupApi = {
-  getAll:        ()                              => request("/group-expenses"),
-  getById:       (id: string)                    => request(`/group-expenses/${id}`),
-  create:        (body: object)                  => request("/group-expenses", { method: "POST", body: JSON.stringify(body) }),
-  addMember:     (id: string, body: object)      => request(`/group-expenses/${id}/add-member`, { method: "POST", body: JSON.stringify(body) }),
-  addExpense:    (id: string, body: object)      => request(`/group-expenses/${id}/add-expense`, { method: "POST", body: JSON.stringify(body) }),
-  deleteExpense: (groupId: string, expId: string) => request(`/group-expenses/${groupId}/expenses/${expId}`, { method: "DELETE" }),
-  delete:        (id: string)                    => request(`/group-expenses/${id}`, { method: "DELETE" }),
-  sendSplitEmails: (id: string, body: object)    => request(`/group-expenses/${id}/send-split-emails`, { method: "POST", body: JSON.stringify(body) }),
+  getAll:          ()                               => request("/group-expenses"),
+  getById:         (id: string)                     => request(`/group-expenses/${id}`),
+  create:          (body: object)                   => request("/group-expenses", { method: "POST", body: JSON.stringify(body) }),
+  addMember:       (id: string, body: object)       => request(`/group-expenses/${id}/add-member`, { method: "POST", body: JSON.stringify(body) }),
+  addExpense:      (id: string, body: object)       => request(`/group-expenses/${id}/add-expense`, { method: "POST", body: JSON.stringify(body) }),
+  deleteExpense:   (groupId: string, expId: string) => request(`/group-expenses/${groupId}/expenses/${expId}`, { method: "DELETE" }),
+  delete:          (id: string)                     => request(`/group-expenses/${id}`, { method: "DELETE" }),
+  sendSplitEmails: (id: string, body: object)       => request(`/group-expenses/${id}/send-split-emails`, { method: "POST", body: JSON.stringify(body) }),
+  // BUG-002 FIX: was missing, caused TypeError in useRemoveGroupMember
+  removeMember:    (groupId: string, memberId: string) => request(`/group-expenses/${groupId}/members/${memberId}`, { method: "DELETE" }),
 };
+
+// Alias so any file that imports groupExpenseApi directly also works
+export const groupExpenseApi = groupApi;
 
 export const reportsApi = {
   getSummary: (params: { startDate: string; endDate: string }) => {

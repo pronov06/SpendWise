@@ -70,7 +70,7 @@ export const sendOTPEmail = async (email, otp) => {
 // ─── Send Password Reset Email ────────────────────────────
 export const sendPasswordResetEmail = async (email, resetToken) => {
   try {
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+    const resetLink = `${process.env.FRONTEND_URL || "http://localhost:5173"}/reset-password?token=${resetToken}`;
 
     const mailOptions = {
       from: process.env.EMAIL_FROM || "noreply@spendwise.app",
@@ -152,6 +152,7 @@ export const sendWelcomeEmail = async (email, name) => {
     return true;
   } catch (error) {
     console.error(`❌ Failed to send welcome email to ${email}:`, error.message);
+    throw error; // BUG-008 FIX: re-throw so callers know the email failed
   }
 };
 
@@ -232,7 +233,7 @@ export const sendGroupSplitEmail = async (memberEmail, memberName, groupName, se
 
             <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
             <p style="color: #999; font-size: 12px; text-align: center;">
-              This is an automated split report from SpendWise. Track more at <a href="${process.env.FRONTEND_URL}" style="color: #14b8a6; text-decoration: none;">spendwise.app</a>
+              This is an automated split report from SpendWise. Track more at <a href="${process.env.FRONTEND_URL || "http://localhost:5173"}" style="color: #14b8a6; text-decoration: none;">spendwise.app</a>
             </p>
           </div>
         </div>
@@ -244,6 +245,7 @@ export const sendGroupSplitEmail = async (memberEmail, memberName, groupName, se
     return true;
   } catch (error) {
     console.error(`❌ Failed to send split email to ${memberEmail}:`, error.message);
+    throw error; // BUG-008 FIX: re-throw so callers know the email failed
   }
 };
 
