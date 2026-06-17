@@ -1,271 +1,317 @@
-# SpendWise — Personal Expense Tracker
+<div align="center">
 
-> A full-stack personal finance application built with **React + TypeScript** (frontend) and **Node.js + Express + MongoDB** (backend). Track expenses, manage income, set budgets, and collaborate on shared group expenses — all in one clean dashboard.
+# 💰 SpendWise
 
----
+### *Your Personal Finance Command Center*
 
-## Table of Contents
-
-1. [Features](#features)
-2. [Tech Stack](#tech-stack)
-3. [Project Structure](#project-structure)
-4. [Getting Started](#getting-started)
-   - [Prerequisites](#prerequisites)
-   - [Environment Variables](#environment-variables)
-   - [Running the App](#running-the-app)
-5. [API Reference](#api-reference)
-   - [Authentication](#authentication-endpoints)
-   - [Expenses](#expenses-endpoints)
-   - [Incomes](#incomes-endpoints)
-   - [Budgets](#budget-endpoints)
-   - [Groups](#groups-endpoints)
-   - [Other Endpoints](#other-endpoints)
-6. [Database Schema](#database-schema)
-7. [Frontend Architecture](#frontend-architecture)
-8. [Email Setup](#email-setup)
-9. [Deployment Checklist](#deployment-checklist)
-10. [Attributions](#attributions)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_App-10b981?style=for-the-badge)](https://spend-wise-gmrs.vercel.app)
+[![GitHub Stars](https://img.shields.io/github/stars/pronov06/SpendWise?style=for-the-badge&color=facc15&logo=github)](https://github.com/pronov06/SpendWise)
+[![License](https://img.shields.io/badge/License-MIT-6366f1?style=for-the-badge)](LICENSE)
+[![Deploy on Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?style=for-the-badge&logo=vercel)](https://vercel.com)
 
 ---
 
-## Features
+**SpendWise** is a full-stack personal finance tracker that helps you take control of your money. Track expenses, manage income, set smart budgets, split group costs, and get AI-powered financial insights — all in one beautifully designed dashboard.
 
-- **Authentication** — Register, verify via OTP email, and login with JWT tokens
-- **Expense Tracking** — Add, edit, delete, and filter expenses by category/date range
-- **Income Tracking** — Separate income management with source tracking
-- **Budget Management** — Set per-category budgets with real-time spending calculation
-- **Group Expenses** — Create groups, add members, and split shared costs
-- **Notifications** — In-app alert center with budget and category alerts
-- **Spending Heatmap** — Visual overview of daily/monthly spending patterns
-- **Reports & Analytics** — Category breakdowns and summary reports
-- **Recurring Transactions** — Mark expenses/incomes as recurring (daily/weekly/monthly/yearly)
-- **Dark-ready UI** — Built with Tailwind CSS v4, Radix UI, and Recharts
+<br/>
+
+![SpendWise Banner](https://raw.githubusercontent.com/pronov06/SpendWise/main/guidelines/banner.png)
+
+</div>
 
 ---
 
-## Tech Stack
+## ✨ Features
+
+<table>
+  <tr>
+    <td width="50%">
+      <h3>🔐 Authentication & Security</h3>
+      <ul>
+        <li>Email + OTP two-factor verification</li>
+        <li>JWT-based sessions (7-day expiry)</li>
+        <li>Rate-limited auth endpoints</li>
+        <li>Bcrypt password hashing</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <h3>💸 Expense & Income Tracking</h3>
+      <ul>
+        <li>Add, edit, delete transactions</li>
+        <li>Filter by category, date range & tags</li>
+        <li>Mark as recurring (daily/weekly/monthly)</li>
+        <li>Payment method tracking</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>📊 Analytics & Reports</h3>
+      <ul>
+        <li>Interactive spending heatmap</li>
+        <li>Category breakdowns with Recharts</li>
+        <li>Monthly trend visualization</li>
+        <li>Export reports as PDF</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <h3>👥 Group Expenses</h3>
+      <ul>
+        <li>Create groups & add members</li>
+        <li>Split shared costs automatically</li>
+        <li>Email split summaries to members</li>
+        <li>Admin role management</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <h3>🎯 Budget Management</h3>
+      <ul>
+        <li>Per-category budget limits</li>
+        <li>Real-time spent vs. limit tracking</li>
+        <li>In-app budget alert notifications</li>
+        <li>Weekly/monthly periods</li>
+      </ul>
+    </td>
+    <td width="50%">
+      <h3>🤖 AI Financial Assistant</h3>
+      <ul>
+        <li>RAG-based Gemini AI chatbot</li>
+        <li>Context-aware financial advice</li>
+        <li>Rate-limited for cost protection</li>
+        <li>Markdown-formatted responses</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🛠️ Tech Stack
+
+<div align="center">
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, TypeScript, Vite |
-| Styling | Tailwind CSS v4, Radix UI, Lucide Icons |
-| Charts | Recharts |
-| Backend | Node.js, Express.js |
-| Database | MongoDB (Mongoose ORM) |
-| Auth | JWT (7-day expiry) + OTP email verification |
-| Email | Nodemailer (Gmail / custom SMTP) |
-| PDF Export | jsPDF + jsPDF-AutoTable |
+|:---:|:---|
+| **Frontend** | React 18, TypeScript, Vite |
+| **Styling** | Tailwind CSS v4, Radix UI, Lucide Icons |
+| **Charts** | Recharts |
+| **State / Routing** | React Context, React Router v7 |
+| **Backend** | Node.js, Express.js (Serverless) |
+| **Database** | MongoDB Atlas (Mongoose ODM) |
+| **Auth** | JWT + OTP via Nodemailer |
+| **AI** | Google Gemini API |
+| **PDF Export** | jsPDF + AutoTable |
+| **Deployment** | Vercel (Frontend + Serverless Backend) |
+
+</div>
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 SpendWise/
-├── src/                          # Frontend (React + TypeScript)
+├── 📂 src/                          # Frontend (React + TypeScript)
 │   └── app/
-│       ├── components/           # UI components (Dashboard, Settings, etc.)
-│       ├── context/              # AuthContext, NotificationContext
+│       ├── components/              # Dashboard, Settings, Charts, etc.
+│       ├── context/                 # AuthContext, NotificationContext
 │       └── services/
-│           ├── api.ts            # All API clients (expenseApi, incomeApi, etc.)
-│           ├── types.ts          # TypeScript interfaces for all entities
-│           └── hooks.ts          # Custom React hooks for data fetching
-├── server/                       # Backend (Node.js + Express)
-│   ├── models/                   # Mongoose schemas
+│           ├── api.ts               # Typed API clients for all endpoints
+│           ├── types.ts             # TypeScript interfaces & enums
+│           └── hooks.ts             # Custom React data-fetching hooks
+│
+├── 📂 backend/                      # Backend (Node.js + Express)
+│   ├── models/                      # Mongoose schemas
 │   │   ├── User.js
 │   │   ├── Expense.js
 │   │   ├── Income.js
 │   │   ├── Budget.js
 │   │   ├── Group.js
-│   │   ├── GroupExpense.js       # Legacy
-│   │   ├── Transaction.js        # Legacy (backward compatible)
 │   │   └── Feedback.js
-│   ├── routes/                   # Express routers
+│   ├── routes/                      # Express route handlers
 │   │   ├── auth.js
 │   │   ├── expenses.js
 │   │   ├── incomes.js
 │   │   ├── budget.js
 │   │   ├── groups.js
-│   │   ├── group.js              # Legacy group expenses
-│   │   ├── transactions.js       # Legacy
-│   │   ├── feedback.js
 │   │   ├── reports.js
 │   │   ├── heatmap.js
-│   │   └── user.js
+│   │   ├── feedback.js
+│   │   ├── user.js
+│   │   └── chat.js
 │   ├── services/
-│   │   └── emailService.js       # Nodemailer OTP & welcome emails
-│   └── index.js                  # Server entry point
-├── .env                          # Frontend env vars (VITE_API_URL)
-├── .env.example                  # Template for .env
+│   │   └── emailService.js          # OTP & welcome email templates
+│   └── index.js                     # Express app entry point
+│
+├── 📂 api/
+│   └── index.js                     # Vercel serverless entry (proxy)
+│
+├── vercel.json                      # Vercel routing config
+├── vite.config.ts                   # Vite dev proxy config
 └── package.json
 ```
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
 - **Node.js** v18+
 - **npm** v9+
-- A **MongoDB** connection (local or [MongoDB Atlas](https://www.mongodb.com/atlas))
-- A **Gmail** account (or any SMTP provider) for OTP emails
+- A **MongoDB Atlas** cluster (free tier works great)
+- A **Gmail account** with 2FA and App Password for OTP emails
+- A **Google Gemini API** key (for the AI chatbot)
 
 ---
 
-### Environment Variables
+### 1. Clone the Repository
 
-#### Frontend — `.env` (root directory)
-
-```env
-VITE_API_URL=http://localhost:5000/api
-```
-
-Copy the template:
 ```bash
-cp .env.example .env
+git clone https://github.com/pronov06/SpendWise.git
+cd SpendWise
 ```
 
-#### Backend — `server/.env`
+### 2. Install Dependencies
+
+```bash
+# Install all dependencies (frontend + backend)
+npm install
+cd backend && npm install && cd ..
+```
+
+### 3. Configure Environment Variables
+
+Create `backend/.env` from the example:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Then fill in your values:
 
 ```env
-MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/spendwise?retryWrites=true&w=majority
-JWT_SECRET=your_super_secret_key_change_this_in_production
+# ── Database ──────────────────────────────────────
+MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/spendwise
+
+# ── Auth ──────────────────────────────────────────
+JWT_SECRET=your_super_secret_256_bit_key_here
 JWT_EXPIRES_IN=7d
-PORT=5000
 
-# Email (for OTP)
-EMAIL_SERVICE=gmail
+# ── Email (OTP) ───────────────────────────────────
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
 EMAIL_USER=your-email@gmail.com
-EMAIL_PASSWORD=your-16-char-app-password   # Gmail App Password, NOT your account password
-FRONTEND_URL=http://localhost:5173
+EMAIL_PASSWORD=xxxx-xxxx-xxxx-xxxx     # Gmail App Password (16 chars)
+EMAIL_FROM=SpendWise <your-email@gmail.com>
+
+# ── AI Chatbot ────────────────────────────────────
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# ── Misc ──────────────────────────────────────────
+MOCK_OTP=false     # Set to true for local dev (logs OTP to console)
+PORT=5000
 ```
 
-> **Gmail App Password**: Go to [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) → Generate a 16-character password. Requires 2FA to be enabled.
+> **Getting a Gmail App Password:**
+> 1. Enable [2-Step Verification](https://myaccount.google.com/security) on your Google account
+> 2. Go to [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
+> 3. Generate a 16-character app password
+
+### 4. Run the Application
+
+```bash
+# Start both frontend and backend together
+npm run dev:all
+```
+
+| Service | URL |
+|---|---|
+| **Frontend** | http://localhost:5173 |
+| **Backend API** | http://localhost:5000/api |
 
 ---
 
-### Running the App
+## 🌐 API Reference
 
-**1. Install frontend dependencies**
-```bash
-npm install
-```
+**Base URL (production):** `https://spend-wise-gmrs.vercel.app/api`  
+**Base URL (local):** `http://localhost:5000/api`
 
-**2. Install backend dependencies**
-```bash
-cd server
-npm install
-```
-
-**3. Start backend (port 5000)**
-```bash
-cd server
-npm run dev
-```
-
-**4. Start frontend (port 5173)**
-```bash
-# from root
-npm run dev
-```
-
-Open [http://localhost:5173](http://localhost:5173) in your browser.
-
----
-
-## API Reference
-
-**Base URL:** `http://localhost:5000/api`
-
-All endpoints except `/auth/*` require a Bearer token:
+All protected endpoints require a Bearer token:
 ```
 Authorization: Bearer <jwt_token>
 ```
 
----
+<details>
+<summary><strong>🔐 Authentication Endpoints</strong></summary>
+<br/>
 
-### Authentication Endpoints
+| Method | Endpoint | Description | Auth |
+|:---:|---|---|:---:|
+| `POST` | `/auth/register` | Create new account | ❌ |
+| `POST` | `/auth/verify-otp` | Verify email with OTP → returns JWT | ❌ |
+| `POST` | `/auth/resend-otp` | Request a fresh OTP code | ❌ |
+| `POST` | `/auth/login` | Login → returns JWT | ❌ |
 
-| Method | Endpoint | Description | Auth Required |
-|--------|----------|-------------|:---:|
-| POST | `/auth/register` | Create new account | ❌ |
-| POST | `/auth/verify-otp` | Verify email with OTP | ❌ |
-| POST | `/auth/resend-otp` | Request a new OTP | ❌ |
-| POST | `/auth/login` | Login with credentials | ❌ |
-
-**Register**
-```json
-POST /auth/register
+```jsonc
+// POST /auth/register
 {
   "name": "John Doe",
   "email": "john@example.com",
   "phone": "+1234567890",
   "password": "password123"
 }
-```
 
-**Verify OTP** → Returns JWT token
-```json
-POST /auth/verify-otp
+// POST /auth/verify-otp → { token, user }
 { "email": "john@example.com", "otp": "123456" }
 ```
+</details>
 
-**Login** → Returns JWT token
-```json
-POST /auth/login
-{ "email": "john@example.com", "password": "password123" }
-```
+<details>
+<summary><strong>💸 Expenses Endpoints</strong></summary>
+<br/>
 
----
+| Method | Endpoint | Description | Auth |
+|:---:|---|---|:---:|
+| `GET` | `/expenses` | List expenses (paginated + filterable) | ✅ |
+| `GET` | `/expenses/by-category` | Totals grouped by category | ✅ |
+| `POST` | `/expenses` | Create expense | ✅ |
+| `PUT` | `/expenses/:id` | Update expense | ✅ |
+| `DELETE` | `/expenses/:id` | Delete expense | ✅ |
 
-### Expenses Endpoints
+**Query Parameters:** `category`, `startDate`, `endDate`, `page`, `limit`
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/expenses` | List expenses (paginated, filterable) |
-| GET | `/expenses/by-category` | Expenses grouped by category |
-| POST | `/expenses` | Create expense |
-| PUT | `/expenses/:id` | Update expense |
-| DELETE | `/expenses/:id` | Delete expense |
-
-**Query parameters for GET `/expenses`:**
-- `category` — filter by category name
-- `startDate` / `endDate` — ISO date format (`2025-01-01`)
-- `page` (default: `1`) / `limit` (default: `50`)
-
-**Create Expense**
-```json
-POST /expenses
+```jsonc
+// POST /expenses
 {
   "category": "Food",
   "description": "Lunch at cafe",
   "amount": 75.50,
   "date": "2025-02-01T12:00:00Z",
-  "tags": ["lunch"],
+  "tags": ["lunch", "work"],
   "icon": "🍕",
   "paymentMethod": "card",
   "isRecurring": false
 }
 ```
+</details>
 
----
+<details>
+<summary><strong>💰 Incomes Endpoints</strong></summary>
+<br/>
 
-### Incomes Endpoints
+| Method | Endpoint | Description | Auth |
+|:---:|---|---|:---:|
+| `GET` | `/incomes` | List incomes | ✅ |
+| `GET` | `/incomes/by-category` | Totals by category | ✅ |
+| `POST` | `/incomes` | Create income | ✅ |
+| `PUT` | `/incomes/:id` | Update income | ✅ |
+| `DELETE` | `/incomes/:id` | Delete income | ✅ |
 
-Same structure as Expenses:
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/incomes` | List incomes (paginated, filterable) |
-| GET | `/incomes/by-category` | Incomes grouped by category |
-| POST | `/incomes` | Create income |
-| PUT | `/incomes/:id` | Update income |
-| DELETE | `/incomes/:id` | Delete income |
-
-**Create Income**
-```json
-POST /incomes
+```jsonc
+// POST /incomes — recurringInterval: "daily" | "weekly" | "monthly" | "yearly"
 {
   "category": "Salary",
   "description": "Monthly salary",
@@ -276,139 +322,56 @@ POST /incomes
   "recurringInterval": "monthly"
 }
 ```
+</details>
 
-> `recurringInterval` values: `daily` | `weekly` | `monthly` | `yearly`
+<details>
+<summary><strong>🎯 Budget Endpoints</strong></summary>
+<br/>
 
----
+| Method | Endpoint | Description | Auth |
+|:---:|---|---|:---:|
+| `GET` | `/budget` | Get all budgets (includes live `spent` field) | ✅ |
+| `POST` | `/budget` | Create budget | ✅ |
+| `PUT` | `/budget/:id` | Update budget | ✅ |
+| `DELETE` | `/budget/:id` | Delete budget | ✅ |
 
-### Budget Endpoints
+> One budget per category per user. `GET /budget` auto-calculates `spent` from current-month expenses.
+</details>
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/budget` | Get all budgets with real-time `spent` amount |
-| POST | `/budget` | Create budget |
-| PUT | `/budget/:id` | Update budget |
-| DELETE | `/budget/:id` | Delete budget |
+<details>
+<summary><strong>👥 Groups Endpoints</strong></summary>
+<br/>
 
-**Create Budget**
-```json
-POST /budget
-{
-  "category": "Food",
-  "limit": 500,
-  "period": "monthly",
-  "color": "#14b8a6",
-  "icon": "🍕"
-}
-```
+| Method | Endpoint | Description | Auth |
+|:---:|---|---|:---:|
+| `GET` | `/groups` | List user's groups | ✅ |
+| `POST` | `/groups` | Create group | ✅ |
+| `POST` | `/groups/:id/add-member` | Add member by userId or email | ✅ |
+| `DELETE` | `/groups/:id/remove-member/:memberId` | Remove member (admin only) | ✅ |
+| `DELETE` | `/groups/:id` | Delete group (creator only) | ✅ |
+</details>
 
-> Only **one budget per category** per user. Use `PUT` to update.
-> `GET /budget` automatically calculates `spent` from current-month expenses.
-
----
-
-### Groups Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/groups` | List user's groups |
-| GET | `/groups/:id` | Get specific group |
-| POST | `/groups` | Create group (creator is auto-added as admin) |
-| PUT | `/groups/:id` | Update group (admin only) |
-| POST | `/groups/:id/add-member` | Add member by userId or email |
-| DELETE | `/groups/:id/remove-member/:memberId` | Remove member (admin only) |
-| DELETE | `/groups/:id` | Delete group (creator only) |
-
-**Create Group**
-```json
-POST /groups
-{ "name": "Weekend Trip", "description": "Beach vacation", "icon": "🏖️", "category": "travel" }
-```
-
-**Add Member**
-```json
-POST /groups/:id/add-member
-{ "userId": "user_id_here" }
-// OR by email:
-{ "email": "friend@example.com", "name": "Friend Name" }
-```
-
----
-
-### Other Endpoints
+<details>
+<summary><strong>📊 Other Endpoints</strong></summary>
+<br/>
 
 | Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/feedback` | Submit feedback (`type`: `bug` \| `feature` \| `general` \| `praise`) |
-| GET | `/reports/summary` | Summary report (`?startDate=...&endDate=...`) |
-| GET | `/reports/category` | Category breakdown |
-| GET | `/heatmap` | Spending heatmap (`?year=2025&month=2`) |
-| GET | `/user/profile` | Get user profile |
-| PUT | `/user/profile` | Update user profile & notification preferences |
-
-> **Legacy:** `/transactions` and `/group-expenses` endpoints remain active for backward compatibility.
-
----
-
-### Error Responses
-
-```json
-{ "message": "Error description" }
-```
-
-| Code | Meaning |
-|------|---------|
-| 200 | Success |
-| 201 | Created |
-| 400 | Bad Request (missing/invalid fields) |
-| 401 | Unauthorized (missing/expired token) |
-| 403 | Forbidden (insufficient permissions) |
-| 404 | Not Found |
-| 500 | Server Error |
+|:---:|---|---|
+| `GET` | `/reports/summary` | Summary (`?startDate=...&endDate=...`) |
+| `GET` | `/reports/category-breakdown` | Spending by category |
+| `GET` | `/reports/monthly-trend` | Monthly totals |
+| `GET` | `/heatmap` | Daily spending heatmap data |
+| `GET/PUT` | `/user/profile` | View/update user profile |
+| `PUT` | `/user/change-password` | Change password |
+| `POST` | `/feedback` | Submit feedback |
+| `POST` | `/chat` | AI financial assistant chat |
+| `GET` | `/health` | Health check |
+</details>
 
 ---
 
-## Database Schema
+## 🗄️ Database Schema
 
-### User
-```js
-{ name, email (unique), phone, password (hashed), role, isVerified, otp, otpExpires,
-  budgetAlerts, categoryAlerts, weeklySummary, avatar, createdAt, updatedAt }
-```
-
-### Expense
-```js
-{ userId → User, category, description, amount, date, tags[], icon,
-  paymentMethod, isRecurring, recurringInterval, createdAt, updatedAt }
-```
-
-### Income
-```js
-{ userId → User, category, description, amount, date, tags[], icon,
-  source, isRecurring, recurringInterval, createdAt, updatedAt }
-```
-
-### Budget
-```js
-{ userId → User, category, limit, period ("weekly"|"monthly"), color, icon,
-  createdAt, updatedAt }
-// `spent` is calculated dynamically on GET
-```
-
-### Group
-```js
-{ name, description, createdBy → User,
-  members: [{ user → User, name, email, isAdmin, joinedAt }],
-  icon, category, isActive, createdAt, updatedAt }
-```
-
-### Feedback
-```js
-{ userId → User, type ("bug"|"feature"|"general"|"praise"), message, rating (1-5),
-  createdAt, updatedAt }
-```
-
-### Database Relationships
 ```
 User
  ├── (1:Many) → Expense
@@ -419,103 +382,131 @@ User
  └── (1:Many) → Feedback
 ```
 
----
+<details>
+<summary><strong>View full schema definitions</strong></summary>
+<br/>
 
-## Frontend Architecture
-
-### API Clients (`src/app/services/api.ts`)
-
-```typescript
-import { expenseApi, incomeApi, budgetApi, groupApi, userApi } from '@/app/services/api';
-
-// Examples
-const expenses = await expenseApi.getAll({ page: 1, limit: 20, category: 'Food' });
-const income   = await incomeApi.create({ category: 'Salary', amount: 5000, ... });
-const budgets  = await budgetApi.getAll(); // includes `.spent` field
-await userApi.updateProfile({ name: 'New Name', budgetAlerts: true });
+**User**
+```js
+{ name, email (unique, indexed), phone, password (bcrypt), role,
+  isVerified, otp, otpExpires, avatar,
+  budgetAlerts, categoryAlerts, weeklySummary,
+  createdAt, updatedAt }
 ```
 
-### Auth Context (`src/app/context/AuthContext.tsx`)
-
-```typescript
-import { useAuth } from '@/app/context/AuthContext';
-
-const { user, login, logout, setUser } = useAuth();
+**Expense / Income**
+```js
+{ userId → User, category, description, amount, date,
+  tags[], icon, paymentMethod,
+  isRecurring, recurringInterval ("daily"|"weekly"|"monthly"|"yearly"),
+  createdAt, updatedAt }
 ```
 
-- Token stored in `localStorage` as `spendwise_token`
-- Automatically included in every API request header
-
-### Custom Hooks (`src/app/services/hooks.ts`)
-
-```typescript
-import { useExpenses, useCreateExpense, useBudgets } from '@/app/services/hooks';
-
-const { data, status, error } = useExpenses(50, 'Food');
-const { create, status: creating } = useCreateExpense();
+**Budget**
+```js
+{ userId → User, category (unique per user), limit, period ("weekly"|"monthly"),
+  color, icon, createdAt, updatedAt }
+// `spent` field is calculated dynamically on every GET request
 ```
 
-### TypeScript Types (`src/app/services/types.ts`)
-
-```typescript
-import type { Expense, ExpensePayload, Income, Budget, Group, AuthUser } from '@/app/services/types';
+**Group**
+```js
+{ name, description, createdBy → User,
+  members: [{ user → User, name, email, isAdmin, joinedAt }],
+  icon, category, isActive, createdAt, updatedAt }
 ```
+</details>
 
 ---
 
-## Email Setup
+## ☁️ Deployment
 
-OTP emails are sent via **Nodemailer** when users register or request a resend.
+SpendWise is optimized for **Vercel** — both frontend and backend run on the same domain at zero cost.
 
-Three email templates are included:
-1. **OTP Verification Email** — 6-digit code, expires in 10 minutes
-2. **Welcome Email** — Sent after successful verification
-3. **Password Reset Email** — Ready for future use
+### How it Works
 
-### Gmail Configuration
-
-1. Enable [2-Step Verification](https://myaccount.google.com/security) on your Google account
-2. Create an [App Password](https://myaccount.google.com/apppasswords)
-3. Add to `server/.env`:
-   ```env
-   EMAIL_SERVICE=gmail
-   EMAIL_USER=you@gmail.com
-   EMAIL_PASSWORD=xxxx xxxx xxxx xxxx   # 16-char App Password
-   ```
-
-### Custom SMTP
-
-```env
-EMAIL_HOST=smtp.provider.com
-EMAIL_PORT=587
-EMAIL_USER=you@provider.com
-EMAIL_PASSWORD=your-password
+```
+Browser → /api/auth/login
+             ↓
+     vercel.json rewrites
+             ↓
+     api/index.js (proxy)
+             ↓
+     backend/index.js (Express)
+             ↓
+     MongoDB Atlas
 ```
 
-Server startup message confirms email status:
+### Deploy Your Own
+
+1. Fork this repository
+2. Connect your fork to [Vercel](https://vercel.com)
+3. Add the following environment variables in the Vercel dashboard:
+
 ```
-✅ Email service configured and ready
+MONGO_URI
+JWT_SECRET
+JWT_EXPIRES_IN
+EMAIL_HOST
+EMAIL_PORT
+EMAIL_USER
+EMAIL_PASSWORD
+EMAIL_FROM
+GEMINI_API_KEY
+MOCK_OTP=false
 ```
+
+4. Deploy! ✅
+
+### Production Checklist
+
+- [x] Serverless Express with MongoDB connection caching
+- [x] Rate limiting on auth (`10 req/15min`) and chat (`30 msg/15min`) routes
+- [x] Dynamic CORS supporting same-origin Vercel hosting
+- [x] JWT-based authentication with bcrypt password hashing
+- [x] Input validation with `express-validator`
+- [ ] Set up error monitoring (Sentry)
+- [ ] Configure scheduled database backups
+- [ ] Add request logging (Morgan)
 
 ---
 
-## Deployment Checklist
+## 🏗️ Local Development
 
-- [ ] Set `JWT_SECRET` to a strong random value
-- [ ] Use a production MongoDB URI (Atlas or self-hosted)
-- [ ] Set `NODE_ENV=production` on the server
-- [ ] Enable HTTPS (reverse proxy with nginx or a platform like Render/Railway)
-- [ ] Update CORS origin to your production frontend domain
-- [ ] Set `VITE_API_URL` to your production backend URL
-- [ ] Add rate limiting to API routes
-- [ ] Set up request logging (Morgan, etc.)
-- [ ] Set up error monitoring (Sentry, etc.)
-- [ ] Schedule regular database backups
+```bash
+# Run frontend + backend together
+npm run dev:all
+
+# Run only the frontend
+npm run dev
+
+# Run only the backend (with hot reload)
+npm run server
+```
+
+The Vite dev server automatically proxies all `/api` requests to `http://localhost:5000`, so no CORS issues during development.
 
 ---
 
-## Attributions
+## 🙏 Attributions
 
-- UI components from [shadcn/ui](https://ui.shadcn.com/) — [MIT License](https://github.com/shadcn-ui/ui/blob/main/LICENSE.md)
-- Photos from [Unsplash](https://unsplash.com) — [Unsplash License](https://unsplash.com/license)
-- Original Figma design: [SpendWise Expense Tracker UI](https://www.figma.com/design/SPMN7vEnCHNR3VbUrGTk4G/SpendWise-Expense-Tracker-UI)
+| Resource | Usage |
+|---|---|
+| [shadcn/ui](https://ui.shadcn.com/) | UI component library — MIT License |
+| [Radix UI](https://www.radix-ui.com/) | Accessible headless components |
+| [Recharts](https://recharts.org/) | Chart visualizations |
+| [Lucide Icons](https://lucide.dev/) | Icon library |
+| [Google Gemini](https://ai.google.dev/) | AI chatbot backend |
+| [Figma Design](https://www.figma.com/design/SPMN7vEnCHNR3VbUrGTk4G/SpendWise-Expense-Tracker-UI) | Original UI design |
+
+---
+
+<div align="center">
+
+**Built with ❤️ by [Pronov Mazumdar](https://github.com/pronov06)**
+
+[![GitHub](https://img.shields.io/badge/GitHub-pronov06-24292e?style=flat-square&logo=github)](https://github.com/pronov06)
+
+*If you found this project useful, please consider giving it a ⭐ on GitHub!*
+
+</div>
