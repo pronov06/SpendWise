@@ -28,27 +28,38 @@ import chatRoutes from "./routes/chat.js";
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Allow local dev frontend origin
-const allowedOrigins = [
-  "http://localhost:5173",
-].filter(Boolean);
-
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (mobile apps, curl, Postman)
-    if (!origin) return callback(null, true);
-    
-    // Check if the origin matches our allowed list
-    const isAllowed = allowedOrigins.some(allowed => origin === allowed);
-    
-    if (isAllowed || process.env.NODE_ENV !== 'production') {
-      return callback(null, true);
+// Configure CORS dynamically to support local development and same-origin requests on Vercel
+const corsOptionsDelegate = (req, callback) => {
+  const origin = req.header('Origin');
+  let isAllowed = false;
+  
+  if (!origin) {
+    // Allow requests with no origin (like mobile apps, curl, Postman)
+    isAllowed = true;
+  } else {
+    const host = req.header('Host');
+    let isSameOrigin = false;
+    try {
+      const originUrl = new URL(origin);
+      isSameOrigin = originUrl.host === host;
+    } catch (e) {
+      // Ignore URL parsing exceptions
     }
     
-    callback(new Error(`CORS blocked: ${origin}`));
-  },
-  credentials: true,
-}));
+    const allowedOrigins = [
+      "http://localhost:5173",
+    ];
+    const isAllowedOrigin = allowedOrigins.includes(origin);
+    
+    if (isSameOrigin || isAllowedOrigin || process.env.NODE_ENV !== 'production') {
+      isAllowed = true;
+    }
+  }
+  
+  callback(null, { origin: isAllowed, credentials: true });
+};
+
+app.use(cors(corsOptionsDelegate));
 app.use(express.json());
 
 // Rate limiter: max 10 auth requests per 15 minutes per IP
