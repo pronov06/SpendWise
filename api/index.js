@@ -92,40 +92,50 @@ app.use("/api/chat", chatLimiter, chatRoutes); // rate-limited (API cost protect
 
 app.get("/", (_req, res) => res.json({ status: "SpendWise API running ✅" }));
 
-// ─── Start HTTP server immediately so the frontend can always reach it ────────
-app.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  
-  // Verify email configuration
-  const emailConfigured = await verifyEmailConfig();
-  if (!emailConfigured) {
-    console.warn("⚠️  Email service not configured. OTP emails will not be sent.");
-    console.warn("📧 To enable email, configure EMAIL_SERVICE, EMAIL_USER, and EMAIL_PASSWORD in .env");
-  }
-});
+// ─── Start HTTP server (only when NOT running in serverless Vercel environment) ────
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    
+    // Verify email configuration
+    const emailConfigured = await verifyEmailConfig();
+    if (!emailConfigured) {
+      console.warn("⚠️  Email service not configured. OTP emails will not be sent.");
+      console.warn("📧 To enable email, configure EMAIL_SERVICE, EMAIL_USER, and EMAIL_PASSWORD in .env");
+    }
+  });
+}
 
-// ─── Connect to MongoDB in the background with retry ─────────────────────────
+// ─── Connect to MongoDB with Serverless Connection Caching ───────────────────
 const mongoOptions = {
-  serverSelectionTimeoutMS: 10000,
+  serverSelectionTimeoutMS: 5000, // Faster timeout for serverless cold-starts
   socketTimeoutMS: 45000,
   connectTimeoutMS: 10000,
   family: 4, // force IPv4 — avoids IPv6/Compass mismatch
 };
 
-const connectDB = async (retries = 5) => {
-  for (let i = 1; i <= retries; i++) {
-    try {
-      await mongoose.connect(process.env.MONGO_URI, mongoOptions);
-      console.log("✅ MongoDB connected successfully");
-      return;
-    } catch (err) {
-      console.error(`❌ MongoDB attempt ${i}/${retries} failed: ${err.message}`);
-      if (i < retries) {
-        console.log("⏳ Retrying in 5 seconds...");
-        await new Promise((res) => setTimeout(res, 5000));
-      } else {
-        console.error("❌ Could not connect to MongoDB after all retries.");
-      }
+let cachedConnection = null;
+
+const connectDB = async () => {
+  // If already connected or connecting, reuse it
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
+  
+  if (cachedConnection) {
+    return cachedConnection;
+  }
+
+  try {
+    cachedConnection = await mongoose.connect(process.env.MONGO_URI, mongoOptions);
+    console.log("✅ MongoDB connected successfully");
+    return cachedConnection;
+  } catch (err) {
+    console.error(`❌ MongoDB connection failed: ${err.message}`);
+    // In serverless, we don't want to loop/sleep for 25 seconds as it will timeout the request
+    if (!process.env.VERCEL) {
+      console.log("⏳ Retrying in 5 seconds...");
+      setTimeout(connectDB, 5000);
     }
   }
 };
@@ -137,5 +147,8 @@ mongoose.connection.on("disconnected", () =>
   console.warn("⚠️  MongoDB disconnected")
 );
 
+// Trigger connection
 connectDB();
+
+export default app;
 
