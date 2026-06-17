@@ -6,8 +6,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "server": "node --watch api/index.js",
-    "start": "node api/index.js",
+    "server": "node --watch backend/index.js",
+    "start": "node backend/index.js",
     "dev:all": "npx concurrently \"npm run dev\" \"npm run server\" --names \"vite,server\" --prefix-colors \"cyan,green\""
   },
   "dependencies": {
