@@ -314,7 +314,7 @@ export function LandingPage() {
             </p>
             <div className="pt-4">
               <a 
-                href="https://github.com/pranav69-git" 
+                href="https://github.com/pronov06/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl font-bold hover:shadow-xl transition-all transform hover:-translate-y-1"
