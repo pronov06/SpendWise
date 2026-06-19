@@ -1,6 +1,6 @@
 <div align="center">
 
-# 💰 SpendWise
+# 💰  SpendWise
 
 ### *Your Personal Finance Command Center*
 
