@@ -506,7 +506,7 @@ The Vite dev server automatically proxies all `/api` requests to `http://localho
 **Built with ❤️ by [Pronov Mazumdar](https://github.com/pronov06) & [Shreyans Jain H](https://github.com/8701-Shreyans)**
 
 [![GitHub](https://img.shields.io/badge/GitHub-pronov06-24292e?style=flat-square&logo=github)](https://github.com/pronov06)
-[![GitHub](https://img.shields.io/badge/GitHub-8701-Shreyans-24292e?style=flat-square&logo=github)](https://github.com/8701-Shreyans)
+[![GitHub](https://img.shields.io/badge/GitHub-Shreyans-24292e?style=flat-square&logo=github)](https://github.com/8701-Shreyans)
 
 *If you found this project useful, please consider giving it a ⭐ on GitHub!*
 
