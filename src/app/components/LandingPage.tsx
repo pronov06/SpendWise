@@ -120,7 +120,7 @@ export function LandingPage() {
               >
                 Get Started Free
               </Link>
-              
+              <a
                 href="#features"
                 className="px-8 py-4 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:border-teal-500 hover:text-teal-600 transition-all text-center font-bold transform hover:-translate-y-1"
               >
