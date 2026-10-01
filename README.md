@@ -2,7 +2,7 @@
 
 # 💰 SpendWise
 
-### *Your Personal Finance Command Center*
+### *Your Personal Finance Tracker*
 
 [![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_App-10b981?style=for-the-badge)](https://spend-wise-gmrs.vercel.app)
 [![GitHub Stars](https://img.shields.io/github/stars/pronov06/SpendWise?style=for-the-badge&color=facc15&logo=github)](https://github.com/pronov06/SpendWise)
